@@ -24,12 +24,9 @@ public class JmbServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel channel) throws Exception {
-                            System.out.println("#1");
                             channel.pipeline().addLast(new JmbServerHandler());
                         }
-                    })
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    });
 
             ChannelFuture future = server.bind(port).sync();
             System.out.printf("Server listening on port %d...%n", port);

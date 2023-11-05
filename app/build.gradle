@@ -25,7 +25,6 @@ dependencies {
     implementation 'io.reactivex:rxnetty:0.5.1'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'org.slf4j:slf4j-simple:2.0.9'
-
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -37,5 +36,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'pl.edu.pk.student.tomaszkisiel.jmb.server.App'
+    mainClass = 'pl.edu.pk.student.tomaszkisiel.jmb.server.JmbServer'
 }
