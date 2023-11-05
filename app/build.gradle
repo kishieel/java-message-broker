@@ -13,6 +13,13 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven {
+        url = "https://maven.pkg.github.com/kishieel/java-message-broker-proto"
+        credentials {
+            username = githubActor
+            password = githubToken
+        }
+    }
 }
 
 dependencies {
@@ -25,6 +32,7 @@ dependencies {
     implementation 'io.reactivex:rxnetty:0.5.1'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'org.slf4j:slf4j-simple:2.0.9'
+    implementation 'pl.edu.pk.student.tomaszkisiel.jmb:proto:1.0.1'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

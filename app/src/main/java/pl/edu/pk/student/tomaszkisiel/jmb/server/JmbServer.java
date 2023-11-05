@@ -1,10 +1,16 @@
 package pl.edu.pk.student.tomaszkisiel.jmb.server;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import pl.edu.pk.student.tomaszkisiel.jmb.proto.SimpleDto;
+import pl.edu.pk.student.tomaszkisiel.jmb.server.hooks.GracefullyShutdown;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+// exchange: name, type
+// bindings: exchangeName, routingKey, queueName
+// queue: name
 
 public class JmbServer {
     private static final int PORT = 3000;
@@ -14,26 +20,33 @@ public class JmbServer {
     }
 
     public void run(final int port) throws Exception {
-        EventLoopGroup master = new NioEventLoopGroup();
-        EventLoopGroup slave = new NioEventLoopGroup();
+        Runtime.getRuntime().addShutdownHook(new GracefullyShutdown());
 
-        try {
-            ServerBootstrap server = new ServerBootstrap()
-                    .group(master, slave)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel channel) throws Exception {
-                            channel.pipeline().addLast(new JmbServerHandler());
-                        }
-                    });
+        ServerSocket server = new ServerSocket(port);
+        System.out.printf("Server listening on port %d...%n", port);
 
-            ChannelFuture future = server.bind(port).sync();
-            System.out.printf("Server listening on port %d...%n", port);
-            future.channel().closeFuture().sync();
-        } finally {
-            master.shutdownGracefully();
-            slave.shutdownGracefully();
+        while (true) {
+            Socket socket = server.accept();
+            System.out.printf("Client connected (%s)%n", socket);
+
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+            SimpleDto dto = (SimpleDto) in.readObject();
+            System.out.printf("a:%s b:%d c:%f d:a:%b d:b:%b", dto.getA(), dto.getB(), dto.getC(), dto.getD().get("a"), dto.getD().get("b"));
+
+            socket.close();
+//            new Thread(() -> {
+//                try {
+//                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+//                    List<Integer> dto = (List<Integer>) in.readObject();
+//                    System.out.println(dto);
+////                    SimpleDto dto = (SimpleDto) in.readObject(); // .setObjectInputFilter()
+////                    System.out.printf("a:%s b:%d c:%f", dto.getA(), dto.getB(), dto.getC());
+//                } catch (Exception e) {
+//                    System.out.println(e);
+//                }
+//            }).start();
         }
     }
 }
