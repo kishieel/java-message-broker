@@ -21,6 +21,11 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:32.1.1-jre'
+    implementation 'io.netty:netty-all:4.1.100.Final'
+    implementation 'io.reactivex:rxnetty:0.5.1'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -32,5 +37,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'pl.edu.pk.student.tomaszkisiel.jmb.App'
+    mainClass = 'pl.edu.pk.student.tomaszkisiel.jmb.server.App'
 }
