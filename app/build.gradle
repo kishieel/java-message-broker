@@ -40,6 +40,16 @@ java {
     }
 }
 
+tasks.register('runServer', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.JmbServer"
+}
+
+tasks.register('runClient', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.JmbClient"
+}
+
 application {
-    mainClassName = project.hasProperty("root") ? project.findProperty("root").toString() : 'pl.edu.pk.student.tomaszkisiel.jmb.server.JmbServer'
+    mainClassName = project.hasProperty("root") ? project.findProperty("root").toString() : 'pl.edu.pk.student.tomaszkisiel.jmb.JmbServer'
 }
