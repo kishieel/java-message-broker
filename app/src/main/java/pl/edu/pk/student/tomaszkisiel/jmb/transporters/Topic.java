@@ -1,4 +1,4 @@
-package pl.edu.pk.student.tomaszkisiel.jmb.dto;
+package pl.edu.pk.student.tomaszkisiel.jmb.transporters;
 
 import java.io.Serial;
 import java.io.Serializable;

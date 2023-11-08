@@ -2,19 +2,17 @@ package pl.edu.pk.student.tomaszkisiel.jmb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.pk.student.tomaszkisiel.jmb.handlers.ClientHandler;
-import pl.edu.pk.student.tomaszkisiel.jmb.hooks.GracefullyShutdown;
-import pl.edu.pk.student.tomaszkisiel.jmb.orchestrators.Orchestrator;
+import pl.edu.pk.student.tomaszkisiel.jmb.tools.SocketHandler;
+import pl.edu.pk.student.tomaszkisiel.jmb.tools.TopicOrchestrator;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.UUID;
 
 public class JmbServer {
     private static final int PORT = 3000;
     private final Logger logger = LoggerFactory.getLogger(JmbServer.class);
-    private final Orchestrator orchestrator = new Orchestrator();
+    private final TopicOrchestrator orchestrator = new TopicOrchestrator();
     private Boolean running = true;
 
 
@@ -23,7 +21,6 @@ public class JmbServer {
     }
 
     public void run(final int port) {
-        Runtime.getRuntime().addShutdownHook(new GracefullyShutdown());
         ServerSocket server;
 
         try {
@@ -37,7 +34,7 @@ public class JmbServer {
         while (running) {
             try {
                 Socket socket = server.accept();
-                new ClientHandler(socket, orchestrator).start();
+                new SocketHandler(socket, orchestrator).start();
             } catch (IOException e) {
                 running = false;
                 throw new RuntimeException(e);

@@ -2,9 +2,9 @@ package pl.edu.pk.student.tomaszkisiel.jmb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Subscribe;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Topic;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Unsubscribe;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Subscribe;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Topic;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Unsubscribe;
 
 import java.io.EOFException;
 import java.io.IOException;

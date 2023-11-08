@@ -1,11 +1,10 @@
-package pl.edu.pk.student.tomaszkisiel.jmb.handlers;
+package pl.edu.pk.student.tomaszkisiel.jmb.tools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Subscribe;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Topic;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Unsubscribe;
-import pl.edu.pk.student.tomaszkisiel.jmb.orchestrators.Orchestrator;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Subscribe;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Topic;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Unsubscribe;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -16,16 +15,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class ClientHandler extends Thread {
-    private final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
-    private final Orchestrator orchestrator;
+public class SocketHandler extends Thread {
+    private final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
+    private final TopicOrchestrator orchestrator;
     private final Map<Class<?>, Consumer<Object>> actions;
 
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
     private Boolean running = true;
 
-    public ClientHandler(Socket socket, Orchestrator orchestrator) throws IOException {
+    public SocketHandler(Socket socket, TopicOrchestrator orchestrator) throws IOException {
         this.orchestrator = orchestrator;
         this.actions = Map.of(
                 Subscribe.class, (Object dto) -> this.onSubscribe((Subscribe) dto),
@@ -63,7 +62,7 @@ public class ClientHandler extends Thread {
     }
 
     private void onPublish(Topic<?> dto) {
-        Set<ClientHandler> subscribers = orchestrator.getSubscribers(dto.getTopic());
+        Set<SocketHandler> subscribers = orchestrator.getSubscribers(dto.getTopic());
         subscribers.forEach(subscriber -> {
             try {
                 subscriber.out.writeObject(dto);

@@ -3,7 +3,7 @@ package pl.edu.pk.student.tomaszkisiel.jmb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.pk.student.tomaszkisiel.jmb.dto.Topic;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Topic;
 
 import java.util.Scanner;
 
