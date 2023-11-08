@@ -6,8 +6,8 @@
  */
 
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
-    id 'application'
+    id 'java-library'
+    id 'maven-publish'
 }
 
 repositories {
@@ -40,17 +40,42 @@ java {
     }
 }
 
-tasks.register('runServer', JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.JmbServer"
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'pl.edu.pk.student.tomaszkisiel.jmb'
+            artifactId = 'proto'
+            version = '1.0.0'
+
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "JMPProto"
+            url = "https://maven.pkg.github.com/kishieel/java-message-broker"
+            credentials {
+                username = githubActor
+                password = githubToken
+            }
+        }
+    }
 }
 
-tasks.register('runClient', JavaExec) {
+tasks.register('exampleServer', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.examples.ServerExample"
+}
+
+tasks.register('examplePrimitives', JavaExec) {
     standardInput = System.in
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.Example"
+    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.examples.PrimitiveExample"
 }
 
-application {
-    mainClassName = project.hasProperty("root") ? project.findProperty("root").toString() : 'pl.edu.pk.student.tomaszkisiel.jmb.JmbServer'
+tasks.register('examplePojo', JavaExec) {
+    standardInput = System.in
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.examples.PojoExample"
 }

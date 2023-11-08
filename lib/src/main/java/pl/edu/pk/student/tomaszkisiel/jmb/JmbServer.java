@@ -10,15 +10,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class JmbServer {
-    private static final int PORT = 3000;
+
     private final Logger logger = LoggerFactory.getLogger(JmbServer.class);
     private final TopicOrchestrator orchestrator = new TopicOrchestrator();
     private Boolean running = true;
 
-
-    public static void main(String[] args) {
-        new JmbServer().run(PORT);
-    }
 
     public void run(final int port) {
         ServerSocket server;

@@ -1,14 +1,14 @@
-package pl.edu.pk.student.tomaszkisiel.jmb;
-
+package pl.edu.pk.student.tomaszkisiel.jmb.examples;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.pk.student.tomaszkisiel.jmb.JmbClient;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Topic;
 
 import java.util.Scanner;
 
-public class Example {
-    private static final Logger logger = LoggerFactory.getLogger(Example.class);
+public class PrimitiveExample {
+    private static final Logger logger = LoggerFactory.getLogger(PrimitiveExample.class);
     private static final String HOST = "localhost";
     private static final Integer PORT = 3000;
 
@@ -16,7 +16,6 @@ public class Example {
         JmbClient client = new JmbClient(HOST, PORT);
 
         client.subscribe("ping");
-        client.subscribe("pong");
         client.consume((Topic<?> topic) -> {
             logger.info("Received: " + topic.getTopic() + " " + topic.getPayload());
         });
@@ -51,7 +50,6 @@ public class Example {
             } else if (opt.equals("4")) {
                 System.exit(0);
             }
-
         }
     }
 }

@@ -12,5 +12,5 @@ plugins {
 
 apply from: 'github.gradle'
 
-rootProject.name = 'java-message-broker-server'
-include('app')
+rootProject.name = 'java-message-broker'
+include('lib')
