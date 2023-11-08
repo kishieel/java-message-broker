@@ -46,8 +46,9 @@ tasks.register('runServer', JavaExec) {
 }
 
 tasks.register('runClient', JavaExec) {
+    standardInput = System.in
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.JmbClient"
+    mainClass = "pl.edu.pk.student.tomaszkisiel.jmb.Example"
 }
 
 application {
