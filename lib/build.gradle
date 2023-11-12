@@ -10,6 +10,8 @@ plugins {
     id 'maven-publish'
 }
 
+apply from: '../github.gradle'
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -30,7 +32,6 @@ dependencies {
     implementation 'com.google.guava:guava:32.1.1-jre'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'org.slf4j:slf4j-simple:2.0.9'
-    implementation 'pl.edu.pk.student.tomaszkisiel.jmb:proto:1.0.2'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -45,8 +46,8 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'pl.edu.pk.student.tomaszkisiel.jmb'
-            artifactId = 'proto'
-            version = '1.0.0'
+            artifactId = 'server'
+            version = '1.0.1'
 
             from components.java
         }
