@@ -1,6 +1,8 @@
 # JMB Server
 
-TBD
+Requirements:
+- Java 21
+- Redis
 
 ### GitHub Credentials
 

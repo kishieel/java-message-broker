@@ -29,7 +29,8 @@ public class PrimitiveExample {
             System.out.println("[1] Subscribe to topic");
             System.out.println("[2] Unsubscribe from topic");
             System.out.println("[3] Publish to topic");
-            System.out.println("[4] Exit");
+            System.out.println("[4] Fetch topic");
+            System.out.println("[5] Exit");
 
             System.out.print("Opt: ");
             opt = scanner.nextLine();
@@ -48,6 +49,10 @@ public class PrimitiveExample {
                 String payload = scanner.nextLine();
                 client.publish(new Topic<>(topic, payload));
             } else if (opt.equals("4")) {
+                System.out.print("Topic: ");
+                opt = scanner.nextLine();
+                client.fetch(opt);
+            } else if (opt.equals("5")) {
                 System.exit(0);
             }
         }

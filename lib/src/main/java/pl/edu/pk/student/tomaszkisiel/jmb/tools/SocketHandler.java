@@ -2,42 +2,46 @@ package pl.edu.pk.student.tomaszkisiel.jmb.tools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.pk.student.tomaszkisiel.jmb.storage.JmbStorage;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Fetch;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Subscribe;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Topic;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Unsubscribe;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
-public class SocketHandler extends Thread {
+public class SocketHandler implements Callable<Void> {
     private final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
     private final TopicOrchestrator orchestrator;
+    private final JmbStorage storage;
     private final Map<Class<?>, Consumer<Object>> actions;
 
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
     private Boolean running = true;
 
-    public SocketHandler(Socket socket, TopicOrchestrator orchestrator) throws IOException {
+    public SocketHandler(Socket socket, TopicOrchestrator orchestrator, JmbStorage storage) throws IOException {
         this.orchestrator = orchestrator;
+        this.storage = storage;
         this.actions = Map.of(
                 Subscribe.class, (Object dto) -> this.onSubscribe((Subscribe) dto),
                 Unsubscribe.class, (Object dto) -> this.onUnsubscribe((Unsubscribe) dto),
-                Topic.class, (Object dto) -> this.onPublish((Topic<?>) dto)
+                Topic.class, (Object dto) -> this.onPublish((Topic<?>) dto),
+                Fetch.class, (Object dto) -> this.onFetch((Fetch) dto)
         );
         this.out = new ObjectOutputStream(socket.getOutputStream());
         this.in = new ObjectInputStream(socket.getInputStream());
     }
 
     @Override
-    public void run() {
-        logger.info(String.format("Client connected (%s)", threadId()));
+    public Void call() throws Exception {
+        logger.info(String.format("Client connected (%s)", Thread.currentThread().threadId()));
 
         try {
             while (running) {
@@ -48,9 +52,11 @@ public class SocketHandler extends Thread {
             orchestrator.unregister(this);
             running = false;
 
-            if (e instanceof EOFException) logger.info(String.format("Client disconnected (%s)", threadId()));
+            if (e instanceof EOFException) logger.info(String.format("Client disconnected (%s)", Thread.currentThread().threadId()));
             else throw new RuntimeException(e);
         }
+
+        return null;
     }
 
     private void onSubscribe(Subscribe dto) {
@@ -63,6 +69,7 @@ public class SocketHandler extends Thread {
 
     private void onPublish(Topic<?> dto) {
         Set<SocketHandler> subscribers = orchestrator.getSubscribers(dto.getTopic());
+        storage.put(dto.getTopic(), dto.getPayload());
         subscribers.forEach(subscriber -> {
             try {
                 subscriber.out.writeObject(dto);
@@ -70,5 +77,21 @@ public class SocketHandler extends Thread {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private void onFetch(Fetch dto) {
+        List<Object> payloads = storage.getAll(dto.getTopic());
+        payloads.forEach(payload -> {
+            try {
+                Topic<?> topic = new Topic<>(dto.getTopic(), payload);
+                out.writeObject(topic);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public long threadId() {
+        return Thread.currentThread().threadId();
     }
 }

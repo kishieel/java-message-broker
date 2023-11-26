@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2.3-alpine3.18
+    restart: unless-stopped
+    ports: [ '6379:6379' ]
+    volumes: [ 'redis:/data' ]
+    networks: [ 'redis' ]
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: redis
+      REDIS_HOST: redis
+      REDIS_PORT: redis:6379
+      HTTP_USER: root
+      HTTP_PASSWORD: root
+    ports: [ '16379:8081' ]
+    networks: [ 'redis' ]
+
+volumes:
+  redis: null
+
+networks:
+  redis: null

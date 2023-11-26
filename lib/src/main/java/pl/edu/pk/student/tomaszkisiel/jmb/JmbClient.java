@@ -2,6 +2,7 @@ package pl.edu.pk.student.tomaszkisiel.jmb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Fetch;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Subscribe;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Topic;
 import pl.edu.pk.student.tomaszkisiel.jmb.transporters.Unsubscribe;
@@ -62,6 +63,11 @@ public class JmbClient extends Thread {
     public void publish(Topic<?> topic) throws IOException {
         out.writeObject(topic);
         logger.info(String.format("Published to '%s' topic'", topic.getTopic()));
+    }
+
+    public void fetch(String topic) throws IOException {
+        out.writeObject(new Fetch(topic));
+        logger.info(String.format("Fetched from '%s' topic'", topic));
     }
 
     public void consume(Consumer<Topic<?>> consumer) throws IOException {
