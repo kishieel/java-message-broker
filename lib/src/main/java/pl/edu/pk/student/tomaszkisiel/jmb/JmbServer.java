@@ -20,22 +20,15 @@ public class JmbServer {
     private final TopicOrchestrator orchestrator = new TopicOrchestrator();
     private Boolean running = true;
     private JmbStorage storage;
+    private ServerSocket server;
 
     public void run(final int port) {
         this.run(port, 1000);
     }
 
     public void run(final int port, final int pool) {
-        ServerSocket server;
         ExecutorService executor = Executors.newFixedThreadPool(pool);
-
-        try {
-            server = new ServerSocket(port);
-            logger.info(String.format("Server listening on port %d...", port));
-        } catch (IOException e) {
-            logger.error("Server could not be started...");
-            throw new RuntimeException(e);
-        }
+        startServer(port);
 
         while (running) {
             try {
@@ -47,11 +40,17 @@ public class JmbServer {
             }
         }
 
+        stopServer();
         executor.shutdown();
     }
 
-    public void stop() {
+    public void terminate() {
         this.running = false;
+        stopServer();
+    }
+
+    private JmbStorage getStorage() {
+        return this.storage == null ? new InMemoryStorage(Duration.ofMinutes(15), 1000) : storage;
     }
 
     public JmbServer setStorage(JmbStorage storage) {
@@ -59,7 +58,21 @@ public class JmbServer {
         return this;
     }
 
-    private JmbStorage getStorage() {
-        return this.storage == null ? new InMemoryStorage(Duration.ofMinutes(15), 1000) : storage;
+    private void startServer(final int port) {
+        try {
+            server = new ServerSocket(port);
+            logger.info(String.format("Server listening on port %d...", port));
+        } catch (IOException e) {
+            logger.error(String.format("Server could not be started... %s", e));
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void stopServer() {
+        try {
+            server.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
