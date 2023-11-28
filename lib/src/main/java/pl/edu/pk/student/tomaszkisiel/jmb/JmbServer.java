@@ -50,6 +50,10 @@ public class JmbServer {
         executor.shutdown();
     }
 
+    public void stop() {
+        this.running = false;
+    }
+
     public JmbServer setStorage(JmbStorage storage) {
         this.storage = storage;
         return this;
