@@ -31,12 +31,9 @@ public class JmbClient extends Thread {
 
     @Override
     public void run() {
-        logger.info("#1");
         while (running) {
-            logger.info("#2");
             try {
                 Object dto = in.readObject();
-                logger.info("#3");
                 if (dto instanceof Topic<?>) {
                     this.consumer.accept((Topic<?>) dto);
                     logger.info(String.format("Consumed '%s' topic", ((Topic<?>) dto).getTopic()));
@@ -52,10 +49,7 @@ public class JmbClient extends Thread {
             }
         }
 
-        logger.info("#4");
         stopSocket();
-        logger.info("#5");
-
     }
 
     public void subscribe(String topic) throws IOException {

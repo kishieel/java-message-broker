@@ -48,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'pl.edu.pk.student.tomaszkisiel.jmb'
             artifactId = 'server'
-            version = '1.0.4'
+            version = '1.0.5'
 
             from components.java
         }
